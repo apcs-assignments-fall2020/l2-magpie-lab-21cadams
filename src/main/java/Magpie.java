@@ -28,9 +28,13 @@ public class Magpie
      *            the user statement
      * @return a response based on the rules given
      */
-    public String getResponse(String statement){
+    public String getResponse(String statement)
+    {
+        int youfind2 = findWord(statement, "you");
+        int ifind = findWord(statement, "I");
         String response = "";
-        if (statement.indexOf("no") >= 0){
+        if (statement.indexOf("no") >= 0)
+        {
             response = "Why so negative?";
         }
         else if (statement.indexOf("mother") >= 0
@@ -43,26 +47,34 @@ public class Magpie
         else if (statement.indexOf("dog") >= 0 || statement.indexOf("cat") >= 0){
             response = "Tell me more about your pets.";
         }
-        else if (statement.indexOf("Mr.") >= 0) {
+        else if (statement.indexOf("Mr.") >= 0){
             response = "He sounds like a good teacher. ";
         }
-        else if (statement.indexOf("Mrs.") >= 0 || statement.indexOf("Ms.") >= 0) {
-            response = "She sounds like a good teacher. ";
-        }
-        else if (statement.indexOf("soccer") >= 0 || statement.indexOf("baseball") >= 0) {
-            response = "Oh. What sports do you play?";
-        }
-        else if (statement.indexOf("Trump") >= 0 || statement.indexOf("Biden") >= 0) {
-            response = "What do you think about the election?";
-        }
-        else if (statement.indexOf("vanilla") >= 0 || statement.indexOf("chocolate") >= 0) {
-            response = "That sounds delicious!";
-        }
+        else if (statement.indexOf("Ms.") >= 0 || statement.indexOf("Mrs.") >= 0){
+            response = "She sounds like a good teacher.";
+        } 
         else if (statement.trim().length() == 0){
-            response = "Say something, please.";
+            response = "Say something, please."; 
         }
-        else{
-        response = getRandomResponse();
+        else if (statement.indexOf("Ice cream") >= 0 || statement.indexOf("Cake") >= 0){
+            response = "Ooo I love dessert, that sounds good.";
+        }
+        else if (statement.indexOf("Soccer") >= 0 || statement.indexOf("Swimming") >= 0){
+            response = "I know someone who played that sport!";
+        }
+        else if (statement.indexOf("Black") >= 0 || statement.indexOf("Pink") >= 0){
+            response = "I love that color!";
+        }
+        else if (youfind2 >= 0 && findWord(statement, "me") >= 0) {
+            response = transformYouMeStatement(statement);
+        } else if (ifind >= 0 && findWord(statement, "you") >= 0) {
+            response = transformIYouStatement(statement);
+        } else if (findWord(statement, "I want to") >= 0) {
+            response = transformIWantToStatement(statement);
+        } else if (findWord(statement, "I want") >= 0) {
+            response = transformIWantStatement(statement);
+        } else {
+            response = getRandomResponse();
         }
         return response;
     }
@@ -73,7 +85,7 @@ public class Magpie
      */
     public String getRandomResponse()
     {
-        final int NUMBER_OF_RESPONSES = 6;
+        final int NUMBER_OF_RESPONSES = 4;
         double r = Math.random();
         int whichResponse = (int)(r * NUMBER_OF_RESPONSES);
         String response = "";
@@ -93,14 +105,14 @@ public class Magpie
         else if (whichResponse == 3)
         {
             response = "You don't say.";
+        } 
+        else if (whichResponse == 4){
+
+            response = "That's cool...";
         }
-         else if (whichResponse == 4)
-        {
-            response = "Oh ok. Cool.";
-        }
-         else if (whichResponse == 5)
-        {
-            response = "What? Say that again.";
+        else if (whichResponse == 5){
+
+            response = "Sorry, I don't understand exactly.";
         }
     
         return response;
@@ -116,25 +128,10 @@ public class Magpie
     // The method returns the index of the first character in word
     // if it is found, and returns -1 otherwise. 
     public int findWord(String str, String word) {
-        str= str.toLowerCase();
-        word=word.toLowerCase();
-        int length= word.length();
-        int pos = str.indexOf(word);
-        if (str.indexOf(word)<1){
-            if (str.charAt(pos+length)==32){
-                return pos;
-            }
-            else{
-            return -1;
-            }
-        }else {
-            if (str.charAt(pos-1)==32 || str.charAt(pos+length)==32){
-            return pos;
-            }
-            else{
-            return -1;
-            }   
-        }
+        str = " " + str.toLowerCase() + " ";
+        word = " " + word.toLowerCase() + " ";
+
+        return str.indexOf(word);
     }
 
     
@@ -148,8 +145,14 @@ public class Magpie
      */
     public String transformIWantStatement(String statement)
     {
-        //your code here
-        return "";
+        statement = statement.trim();
+        String chars = statement.substring(statement.length() - 1);
+        if (chars.equals(".") || chars.equals("!")){
+            statement = statement.substring(0, statement.length() - 1);
+        }
+        int find = findWord(statement, "I want");
+        String fin = statement.substring(find + 7).trim();
+        return "Would you really be happy if you had " + fin + "?";
     }
 
     /**
@@ -158,10 +161,19 @@ public class Magpie
      * @param statement the user statement, assumed to contain "I" followed by "you"
      * @return the transformed statement
      */
-    public String transformIYouStatement(String statement)
-    {
-        //your code here
-        return "";
+    public String transformIYouStatement(String statement){
+        
+        statement = statement.trim();
+        String chars = statement.substring(statement.length() - 1);
+        if (chars.equals(".")){
+            statement = statement.substring(0, statement.length() - 1);
+        }
+
+        int youfinal = findWord(statement, "I");
+        int mefinal = findWord(statement, "you");
+
+        String fin = statement.substring(youfinal + 1, mefinal).trim();
+        return "Why do you " + fin + " me?";
     }
 
     /**
@@ -172,8 +184,14 @@ public class Magpie
      */
     public String transformIWantToStatement(String statement)
     {
-        // your code here
-        return "";
+        statement = statement.trim();
+        String chars = statement.substring(statement.length() - 1);
+        if (chars.equals(".") || chars.equals("!")){
+            statement = statement.substring(0, statement.length() - 1);
+        }
+        int find = findWord(statement, "I want to");
+        String fin = statement.substring(find + 9).trim();
+        return "What would it mean to " + fin + "?";
     }
 
 
@@ -187,7 +205,16 @@ public class Magpie
      */
     public String transformYouMeStatement(String statement)
     {
-        // your code here
-        return "";
+        statement = statement.trim();
+        String chars = statement.substring(statement.length() - 1);
+        if (chars.equals(".")){
+            statement = statement.substring(0, statement.length() - 1);
+        }
+
+        int youfind = findWord(statement, "you");
+        int mefind = findWord(statement, "me");
+
+        String fin = statement.substring(youfind + 3, mefind).trim();
+        return "What makes you think that I " + fin + " you?";
     }
 }
